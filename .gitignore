@@ -1,0 +1,18 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+trash/
+
+# vscode configuration folder
+.vscode/
+
+# uv files
+*.lock

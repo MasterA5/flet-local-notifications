@@ -1,0 +1,32 @@
+[project]
+name = "flet-local-notifications"
+version = "1.0.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "MasterA5", email = "agustin090806090806@gmail.com" }
+]
+requires-python = ">=3.9, <3.14"
+dependencies = [
+    "flet==0.28.3",
+    "desktop-notifier",
+    "android-notify==1.60.8",
+]
+
+[tool.dev.uv]
+dependencies-group = [
+    "flet[all]==0.28.3",
+    "build"
+]
+
+[tool.uv.sources]
+flet-local-notifications = { workspace = true }
+
+[build-system]
+requires = ["setuptools>=68", "wheel", "build"]
+build-backend = "setuptools.build_meta"
+
+[dependency-groups]
+dev = [
+    "twine>=6.2.0",
+]
