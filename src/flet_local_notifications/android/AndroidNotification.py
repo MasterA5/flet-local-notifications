@@ -1,14 +1,20 @@
+import asyncio
+from datetime import datetime, timedelta
+
 from ..base.BaseNotifications import BaseNotification
 from android_notify import Notification
 from .types import (
+    AndroidScheduleNotificationConfig,
     AndroidChannelNotificationConfig,
     AndroidNotificationUpdateConfig,
     AndroidNotificationConfig,
 )
+from flet import Page
 
 class AndroidNotification(BaseNotification):
-    def __init__(self):
+    def __init__(self, page: Page):
         self.sender: Notification = None
+        self.page = page
 
     def update_notification(self, new_config: AndroidNotificationUpdateConfig):
         if new_config.message:
@@ -73,6 +79,26 @@ class AndroidNotification(BaseNotification):
                 )
 
         self.sender.send()
+
+    async def send_schedule(self, schedule_android_config: AndroidScheduleNotificationConfig) -> asyncio.Task:
+        if isinstance(schedule_android_config.notify_time, datetime):
+            delta = schedule_android_config.notify_time - datetime.now()
+            wait_seconds = max(0, delta.total_seconds())
+        elif isinstance(schedule_android_config.notify_time, timedelta):
+            wait_seconds = max(0, schedule_android_config.notify_time.total_seconds())
+        else:
+            wait_seconds = max(0, float(schedule_android_config.notify_time))
+        
+        async def _waiter():
+            await asyncio.sleep(wait_seconds)
+            await self.send(schedule_android_config.android_configd)
+        
+        task = asyncio.create_task(_waiter())
+        
+        if schedule_android_config.cancel_on_exit:
+            self.page.on_close = lambda e: task.cancel()
+        
+        return task
 
     def get_sender(self) -> Notification:
         return self.sender
