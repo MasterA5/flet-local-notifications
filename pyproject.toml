@@ -13,10 +13,9 @@ dependencies = [
     "android-notify==1.60.8",
 ]
 
-[tool.dev.uv]
-dependencies-group = [
+[dependency-groups]
+dev = [
     "flet[all]==0.28.3",
-    "build"
 ]
 
 [tool.uv.sources]
@@ -25,8 +24,3 @@ flet-local-notifications = { workspace = true }
 [build-system]
 requires = ["setuptools>=68", "wheel", "build"]
 build-backend = "setuptools.build_meta"
-
-[dependency-groups]
-dev = [
-    "twine>=6.2.0",
-]
