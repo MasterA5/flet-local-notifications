@@ -14,7 +14,7 @@ except ImportError:
 class DesktopNotificationConfig:
     title: str
     message: str
-    app_name: str
+    app_name: str = "App"
     icon: Optional[Icon] = None # type: ignore # ignore
     urgency: Urgency = Urgency.Critical
     icon: Optional[Path] = None
