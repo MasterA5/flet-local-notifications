@@ -1,42 +1,35 @@
+from typing import Callable, Optional, Union
+
 from flet import Page, PagePlatform, OptionalControlEventCallable
-from .schedule.schedule_types import ScheduleNotificationConfig
 from .android.AndroidNotification import AndroidNotification
 from .desktop.DesktopNotification import DesktopNotification
 from android_notify import Notification, NotificationHandler
-from .desktop.types import DesktopNotificationConfig
-from .android.types import AndroidNotificationConfig
+from .desktop.types import DesktopNotificationConfig, DesktopScheduleNotificationConfig
+from .android.types import AndroidNotificationConfig, AndroidScheduleNotificationConfig
 from desktop_notifier import DesktopNotifier
-from datetime import datetime, timedelta
-import asyncio
 
 class FletLocalNotification:
     def __init__(self, page: Page, on_permission_accepted: OptionalControlEventCallable = None):
         self.page = page
-        self.__android_sender = AndroidNotification()
-        self.__desktop_sender = DesktopNotification()
-        self.__on_permission_accepted = on_permission_accepted
-
+        
         if not self.page:
             raise ValueError("Page is required")
-
-        self.__init_handler()
+        
+        self.__on_permission_accepted = on_permission_accepted
+        
+        if self.is_android():
+            NotificationHandler.asks_permission(self.__on_permission_accepted)
+        
+        self.__android = AndroidNotification(self.page)
+        self.__desktop = DesktopNotification(self.page)
         
     @property
     def android_sender(self) -> Notification:
-        return self.__android_sender.get_sender()
+        return self.__android.get_sender()
     
     @property
     def desktop_sender(self) -> DesktopNotifier:
-        return self.__desktop_sender.get_sender()
-
-    def __init_handler(self) -> None:
-        if self.is_android():
-            NotificationHandler.asks_permission(self.__on_permission_accepted)
-            self.__handler = self.__android_sender
-        elif self.is_desktop():
-            self.__handler = self.__desktop_sender
-        else:
-            self.__handler = None
+        return self.__desktop.get_sender()
 
     def is_android(self) -> bool:
         return self.page.platform == PagePlatform.ANDROID
@@ -46,32 +39,31 @@ class FletLocalNotification:
 
     async def send(
         self, 
-        android_config: AndroidNotificationConfig, 
-        desktop_config: DesktopNotificationConfig
+        android_config: Optional[AndroidNotificationConfig] = None, 
+        desktop_config: Optional[DesktopNotificationConfig] = None, 
+        on_sent: Optional[Callable] = None
     ) -> None:
-        await self.__handler.send(config=android_config if self.is_android() else desktop_config)
+        if not android_config and self.is_android():
+            raise ValueError("You must configure your notification for the Android platform using the AndroidNotificationConfig class")
+        
+        if not desktop_config and self.is_desktop():
+            raise ValueError("You must configure your notification for the Desktop platform using the DesktopNotificationConfig class")
 
-    async def schedule(
-        self, 
-        config: ScheduleNotificationConfig, 
-        android_config: AndroidNotificationConfig, 
-        desktop_config: DesktopNotificationConfig
-    ) -> asyncio.Task:
-        if isinstance(config.notify_time, datetime):
-            delta = config.notify_time - datetime.now()
-            wait_seconds = max(0, delta.total_seconds())
-        elif isinstance(config.notify_time, timedelta):
-            wait_seconds = max(0, config.notify_time.total_seconds())
-        else:
-            wait_seconds = max(0, float(config.notify_time))
+        if self.is_desktop():
+            await self.__desktop.send(desktop_config)
         
-        async def _waiter():
-            await asyncio.sleep(wait_seconds)
-            await self.send(android_config, desktop_config)
+        if self.is_android():
+            await self.__android.send(android_config)
+
+        if on_sent:
+            return on_sent()
+
+    async def schedule(self, config: Union[AndroidScheduleNotificationConfig, DesktopScheduleNotificationConfig]):
+        if not config:
+            raise ValueError("You need to configure your schedule for notifications using the `<Platform>ScheduleNotificationConfig` class")
         
-        task = asyncio.create_task(_waiter())
-        
-        if config.cancel_on_exit:
-            self.page.on_close = lambda e: task.cancel()
-        
-        return task
+        if self.is_android() and isinstance(config, AndroidScheduleNotificationConfig):
+            await self.__android.send_schedule(config)
+
+        if self.is_desktop() and isinstance(config, DesktopScheduleNotificationConfig):
+            await self.__desktop.send_schedule(config)
