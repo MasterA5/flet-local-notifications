@@ -1,3 +1,4 @@
 from .DesktopNotificationConfig import DesktopNotificationConfig
+from .DesktopScheduleNotificationConfig import DesktopScheduleNotificationConfig
 
-__all__ = ["DesktopNotificationConfig"]
+__all__ = ["DesktopNotificationConfig", "DesktopScheduleNotificationConfig"]

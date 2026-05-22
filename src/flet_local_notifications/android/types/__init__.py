@@ -1,3 +1,4 @@
+from .AndroidScheduleNotificationConfig import AndroidScheduleNotificationConfig
 from .AndroidChannelNotificationConfig import AndroidChannelNotificationConfig
 from .AndroidNotificationUpdateConfig import AndroidNotificationUpdateConfig
 from .AndroidProgressBarUpdateConfig import AndroidProgressBarUpdateConfig
@@ -6,6 +7,7 @@ from .AndroidNotificationButton import AndroidNotificationButton
 from .AndroidNotificationConfig import AndroidNotificationConfig
 
 __all__ = [
+    "AndroidScheduleNotificationConfig",
     "AndroidChannelNotificationConfig",
     "AndroidNotificationUpdateConfig",
     "AndroidProgressBarUpdateConfig",

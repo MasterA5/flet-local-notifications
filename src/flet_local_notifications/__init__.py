@@ -1,8 +1,8 @@
-from .schedule.schedule_types import ScheduleNotificationConfig
 from .android.AndroidNotification import AndroidNotification
 from .desktop.DesktopNotification import DesktopNotification
 from .flet_local_notifications import FletLocalNotification
 from .android.types import (
+    AndroidScheduleNotificationConfig,
     AndroidChannelNotificationConfig, 
     AndroidNotificationUpdateConfig, 
     AndroidProgressBarUpdateConfig,
@@ -11,10 +11,13 @@ from .android.types import (
     AndroidNotificationConfig, 
 )
 from .desktop.types import (
-    DesktopNotificationConfig
+    DesktopScheduleNotificationConfig,
+    DesktopNotificationConfig,
 )
 
 __all__ = [
+    "AndroidScheduleNotificationConfig",
+    "DesktopScheduleNotificationConfig",
     "AndroidChannelNotificationConfig", 
     "AndroidNotificationUpdateConfig", 
     "AndroidProgressBarUpdateConfig",
