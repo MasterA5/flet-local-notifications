@@ -1,21 +1,49 @@
-from desktop_notifier import DesktopNotifier, Urgency
-from .types import DesktopNotificationConfig
-from ..base.BaseNotifications import BaseNotification
-from pathlib import Path
+import asyncio
+from datetime import datetime, timedelta
 import os
+from pathlib import Path
+
+from ..base.BaseNotifications import BaseNotification
+from desktop_notifier import DesktopNotifier, Urgency
+from .types import DesktopNotificationConfig, DesktopScheduleNotificationConfig
+from flet import Page
 
 try:
     from desktop_notifier import Icon
-    FLET_APP_ICON = os.path.join(os.getenv("FLET_ASSETS_DIR/icon.png", f"{os.getcwd()}\\assets\\"), "icon.png") # <- default icon in assets folder
+    FLET_APP_ICON = os.path.join(os.getenv("FLET_ASSETS_DIR"), "icon.png") # <- default icon in assets folder
 except ImportError:
     Icon = None
 
 class DesktopNotification(BaseNotification):
-    def __init__(self):
+    def __init__(self, page: Page):
         self.sender: DesktopNotifier = None
+        self.page = page
 
+        if not self.page:
+            raise ValueError("Page is required")
+        
     def get_sender(self) -> DesktopNotifier:
         return self.sender
+
+    async def send_schedule(self, schedule_desktop_config: DesktopScheduleNotificationConfig) -> asyncio.Task:
+        if isinstance(schedule_desktop_config.notify_time, datetime):
+            delta = schedule_desktop_config.notify_time - datetime.now()
+            wait_seconds = max(0, delta.total_seconds())
+        elif isinstance(schedule_desktop_config.notify_time, timedelta):
+            wait_seconds = max(0, schedule_desktop_config.notify_time.total_seconds())
+        else:
+            wait_seconds = max(0, float(schedule_desktop_config.notify_time))
+        
+        async def _waiter():
+            await asyncio.sleep(wait_seconds)
+            await self.send(schedule_desktop_config.desktop_config)
+        
+        task = asyncio.create_task(_waiter())
+        
+        if schedule_desktop_config.cancel_on_exit:
+            self.page.on_close = lambda e: task.cancel()
+        
+        return task
 
     async def send(self, config: DesktopNotificationConfig):
         self.sender = DesktopNotifier(
