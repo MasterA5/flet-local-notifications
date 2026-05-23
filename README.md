@@ -166,31 +166,6 @@ The application provides comprehensive functionality:
 4. **⏰ Schedule Notifications**: Plan notifications for specific times
 5. **🎨 Customize Notifications**: Advanced styling and configuration options
 
-## 📁 Project Structure
-
-```
-flet-local-notifications/
-├── src/
-│   ├── flet_local_notifications/
-│   │   ├── __init__.py              # Package initialization
-│   │   ├── core.py                  # Core notification logic
-│   │   ├── flet_local_notifications.py  # Main notification class
-│   │   ├── android/                 # Android-specific implementations
-│   │   │   ├── AndroidNotification.py
-│   │   │   └── android_types.py
-│   │   ├── desktop/                 # Desktop-specific implementations
-│   │   │   ├── DesktopNotification.py
-│   │   │   └── desktop_types.py
-│   │   └── schedule/                # Scheduling functionality
-│   │       └── schedule_types.py
-│   └── main.py                      # Main application entry point
-├── pyproject.toml                   # Project configuration and dependencies
-├── README.md                        # This file
-├── README_MEJORADO.md              # Enhanced documentation
-├── LICENSE                          # MIT License
-└── .gitignore                       # Git ignore file
-```
-
 ## 🔧 Key Components
 
 ### FletLocalNotification Class
