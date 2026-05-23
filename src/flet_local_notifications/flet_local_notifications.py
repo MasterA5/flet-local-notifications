@@ -58,12 +58,16 @@ class FletLocalNotification:
         if on_sent:
             return on_sent()
 
-    async def schedule(self, config: Union[AndroidScheduleNotificationConfig, DesktopScheduleNotificationConfig]):
-        if not config:
+    async def schedule(
+        self, 
+        android_schedule_config: Optional[AndroidScheduleNotificationConfig] = None,
+        desktop_schedule_config: Optional[DesktopScheduleNotificationConfig] = None, 
+    ):
+        if not desktop_schedule_config or not android_schedule_config:
             raise ValueError("You need to configure your schedule for notifications using the `<Platform>ScheduleNotificationConfig` class")
         
-        if self.is_android() and isinstance(config, AndroidScheduleNotificationConfig):
-            await self.__android.send_schedule(config)
+        if self.is_android() and android_schedule_config:
+            await self.__android.send_schedule(android_schedule_config)
 
-        if self.is_desktop() and isinstance(config, DesktopScheduleNotificationConfig):
-            await self.__desktop.send_schedule(config)
+        if self.is_desktop() and desktop_schedule_config:
+            await self.__desktop.send_schedule(desktop_schedule_config)
