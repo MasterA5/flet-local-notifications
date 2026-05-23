@@ -10,7 +10,7 @@ from flet import Page
 
 try:
     from desktop_notifier import Icon
-    FLET_APP_ICON = os.path.join(os.getenv("FLET_ASSETS_DIR"), "icon.png") # <- default icon in assets folder
+    FLET_APP_ICON = Path(os.path.join(os.getenv("FLET_ASSETS_DIR"), "icon.png")) # <- default icon created by flet in assets folder
 except ImportError:
     Icon = None
 except TypeError:
@@ -51,7 +51,7 @@ class DesktopNotification(BaseNotification):
         self.sender = DesktopNotifier(
             app_name=config.app_name,
             app_icon=Icon(
-                path=config.icon if isinstance(config.icon, Path) else Path(FLET_APP_ICON)
+                path=config.icon if isinstance(config.icon, Path) else FLET_APP_ICON if FLET_APP_ICON else Path(__file__).parent.parent.resolve() / "assets" / "default_icon.png"
             )
         )
 
