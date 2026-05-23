@@ -246,18 +246,42 @@ ft.app(target=main)
 
 ```python
 from datetime import datetime, timedelta
-from flet_local_notifications import ScheduleNotificationConfig
-
-async def main(page: ft.Page):
+from flet_local_notifications import (
+    FletLocalNotifications, 
+    AndroidNotificationConfig, 
+    DesktopNotificationConfig, 
+    AndroidScheduleNotificationConfig, 
+    DesktopScheduleNotificationConfig,
+)
+import flet as ft
+ 
+def main(page: ft.Page):
     notifier = FletLocalNotification(page)
     
-    # Schedule for 5 minutes from now
-    schedule_config = ScheduleNotificationConfig(
-        notify_time=datetime.now() + timedelta(minutes=5)
+    # ... notification configs ...
+    android_schedule_config = AndroidScheduleNotificationConfig(
+        android_config=AndroidNotificationConfig(
+            title="Schedule Notification",
+            message="Schedule Notification In Android Device",
+        ),
+        notify_time=datetime.now() + timedelta(secconds=5)
+    )
+
+    desktop_schedule_config = DesktopScheduleNotificationConfig(
+        desktop_config=AndroidNotificationConfig(
+            title="Schedule Notification",
+            message="Schedule Notification In Android Device",
+        ),
+        notify_time=datetime.now() + timedelta(secconds=5)
     )
     
-    # ... notification configs ...
-    await notifier.schedule(schedule_config, android_config, desktop_config)
+    # Send Function
+    async def send_schedule(e):
+        await notifier.schedule(android_schedule_config, desktop_schedule_config)
+
+    page.add(ft.Button("Send Schedule", on_click=lambda e: page.run_task(send_schedule, e)))
+
+ft.app(target=main)
 ```
 
 ## 🔮 Future Improvements
