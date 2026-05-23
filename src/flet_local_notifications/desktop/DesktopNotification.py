@@ -13,6 +13,8 @@ try:
     FLET_APP_ICON = os.path.join(os.getenv("FLET_ASSETS_DIR"), "icon.png") # <- default icon in assets folder
 except ImportError:
     Icon = None
+except TypeError:
+    FLET_APP_ICON = None
 
 class DesktopNotification(BaseNotification):
     def __init__(self, page: Page):
