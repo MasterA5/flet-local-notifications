@@ -4,8 +4,8 @@ from flet import Page, PagePlatform, OptionalControlEventCallable
 from .android.AndroidNotification import AndroidNotification
 from .desktop.DesktopNotification import DesktopNotification
 from android_notify import Notification, NotificationHandler
-from .desktop.types import DesktopNotificationConfig, DesktopScheduleNotificationConfig
-from .android.types import AndroidNotificationConfig, AndroidScheduleNotificationConfig
+from .desktop.desktop_types import DesktopNotificationConfig, DesktopScheduleNotificationConfig
+from .android.android_types import AndroidNotificationConfig, AndroidScheduleNotificationConfig
 from desktop_notifier import DesktopNotifier
 
 class FletLocalNotification:
@@ -41,7 +41,7 @@ class FletLocalNotification:
         self, 
         android_config: Optional[AndroidNotificationConfig] = None, 
         desktop_config: Optional[DesktopNotificationConfig] = None, 
-        on_sent: Optional[Callable] = None
+        on_sent: Optional[Callable[[], None]] = None
     ) -> None:
         if not android_config and self.is_android():
             raise ValueError("You must configure your notification for the Android platform using the AndroidNotificationConfig class")
@@ -49,10 +49,10 @@ class FletLocalNotification:
         if not desktop_config and self.is_desktop():
             raise ValueError("You must configure your notification for the Desktop platform using the DesktopNotificationConfig class")
 
-        if self.is_desktop():
+        if self.is_desktop() and desktop_config:
             await self.__desktop.send(desktop_config)
         
-        if self.is_android():
+        if self.is_android() and android_config:
             await self.__android.send(android_config)
 
         if on_sent:
