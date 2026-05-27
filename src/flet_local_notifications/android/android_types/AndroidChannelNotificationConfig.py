@@ -7,6 +7,6 @@ class AndroidChannelNotificationConfig:
     channel_id: Optional[str] = None
     channel_name: Optional[str] = None
     description: Optional[str] = None
-    importance: Optional[AndroidNotificationImportance] = AndroidNotificationImportance.URGENT
+    importance: AndroidNotificationImportance = AndroidNotificationImportance.URGENT
     res_sound_name: Optional[str] = None
     vibrate: bool = False

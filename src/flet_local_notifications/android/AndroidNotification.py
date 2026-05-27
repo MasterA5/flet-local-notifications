@@ -1,19 +1,21 @@
+from typing import Literal
+from typing import cast
 import asyncio
 from datetime import datetime, timedelta
 
 from ..base.BaseNotifications import BaseNotification
 from android_notify import Notification
-from .types import (
+from .android_types import (
     AndroidScheduleNotificationConfig,
     AndroidChannelNotificationConfig,
     AndroidNotificationUpdateConfig,
-    AndroidNotificationConfig,
+    AndroidNotificationConfig
 )
 from flet import Page
 
 class AndroidNotification(BaseNotification):
     def __init__(self, page: Page):
-        self.sender: Notification = None
+        self.sender: Notification = Notification()
         self.page = page
 
     def update_notification(self, new_config: AndroidNotificationUpdateConfig):
@@ -24,23 +26,27 @@ class AndroidNotification(BaseNotification):
             self.sender.updateTitle(new_config.title)
 
         if new_config.ProgressBar:
+            title = new_config.ProgressBar.title if new_config.ProgressBar.title else ''
+            message = new_config.ProgressBar.message if new_config.ProgressBar.message else ''
+            current_value = new_config.ProgressBar.current_value if new_config.ProgressBar.current_value is not None else 0
+
             self.sender.updateProgressBar(
-                title=new_config.ProgressBar.title,
-                message=new_config.ProgressBar.message,
-                current_value=new_config.ProgressBar.current_value,
+                title=title,
+                message=message,
+                current_value=current_value,
             )
 
     def create_channel(self, channel_config: AndroidChannelNotificationConfig):
         self.sender.createChannel(
             id=channel_config.channel_id,
-            name=channel_config.channel_name,
+            name=channel_config.channel_name if channel_config.channel_name else 'default-channel-name',
             description=channel_config.description,
-            importance=channel_config.importance.value,
+            importance=cast(Literal['urgent', 'high', 'medium', 'low', 'none'], channel_config.importance.value),
             res_sound_name=channel_config.res_sound_name,
             vibrate=channel_config.vibrate
         )
 
-    async def send(self, config: AndroidNotificationConfig):   
+    async def send(self, config: AndroidNotificationConfig):  # type: ignore[override]
         self.sender = Notification(
             title=config.title,
             message=config.message,
@@ -80,7 +86,7 @@ class AndroidNotification(BaseNotification):
 
         self.sender.send()
 
-    async def send_schedule(self, schedule_android_config: AndroidScheduleNotificationConfig) -> asyncio.Task:
+    async def send_schedule(self, schedule_android_config: AndroidScheduleNotificationConfig) -> asyncio.Task[None]:
         if isinstance(schedule_android_config.notify_time, datetime):
             delta = schedule_android_config.notify_time - datetime.now()
             wait_seconds = max(0, delta.total_seconds())
@@ -91,7 +97,7 @@ class AndroidNotification(BaseNotification):
         
         async def _waiter():
             await asyncio.sleep(wait_seconds)
-            await self.send(schedule_android_config.android_configd)
+            await self.send(schedule_android_config.android_config)
         
         task = asyncio.create_task(_waiter())
         
