@@ -16,6 +16,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "flet[all]==0.28.3",
+    "pyrefly>=1.0.0",
 ]
 
 [tool.uv.sources]

@@ -1,0 +1,53 @@
+# Directorio raíz donde reside tu código fuente
+search_path = ["src"]
+
+# Patrones globales de archivos Python y Notebooks a escanear
+project_includes = [
+    "src/**/*.py",
+    "src/**/*.ipynb"
+]
+
+# Exclusiones estrictas para que Pyrefly ignore entornos y dependencias en Windows
+project_excludes = [
+    "**/node_modules",
+    "**/__pycache__",
+    "**/.venv",
+    "**/.git",
+    "**/.pytest_cache",
+    "**/.mypy_cache"
+]
+
+# Ignora advertencias dentro de código generado automáticamente
+ignore_errors_in_generated_code = true
+
+# Utiliza el preset estricto predeterminado de Pyrefly
+preset = "strict"
+
+# Forzar la definición de tipos en todas las funciones
+disallow_untyped_defs = true
+
+# Evitar definiciones de tipos incompletas
+disallow_incomplete_defs = true
+
+# Analizar los cuerpos de las funciones aunque no tengan anotaciones
+check_untyped_defs = true
+
+# Emitir advertencias si una función configurada devuelve el tipo general 'Any'
+warn_return_any = true
+
+# Mostrar los errores que antes estaban ocultos (como tus 51 avisos suprimidos)
+warn_unused_ignores = false
+
+# =============================================================================
+# Manejo de Librerías de Terceros (Imports)
+# =============================================================================
+
+# No ignorar imports faltantes de forma silenciosa para evitar fallos invisibles
+# ignore_missing_imports = false
+
+# Evita mapear automáticamente imports desconocidos a 'Any' sin avisar
+# replace_imports_with_any = []
+
+[errors]
+# Ignora inconsistencias al sobrescribir métodos de una clase padre
+missing-override-decorator = false
