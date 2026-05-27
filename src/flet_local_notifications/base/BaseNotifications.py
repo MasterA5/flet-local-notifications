@@ -1,9 +1,10 @@
+from typing import Any
 from abc import ABC, abstractmethod
 
 class BaseNotification(ABC):
     def __init__(self):
         super().__init__()
-        self.sender = None
+        self.sender: Any = None
 
     @abstractmethod
     def get_sender(self):
