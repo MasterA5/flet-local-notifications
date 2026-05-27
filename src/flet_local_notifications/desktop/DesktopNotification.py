@@ -5,12 +5,12 @@ from pathlib import Path
 
 from ..base.BaseNotifications import BaseNotification
 from desktop_notifier import DesktopNotifier, Urgency
-from .types import DesktopNotificationConfig, DesktopScheduleNotificationConfig
+from .desktop_types import DesktopNotificationConfig, DesktopScheduleNotificationConfig
 from flet import Page
 
 try:
     from desktop_notifier import Icon
-    FLET_APP_ICON = Path(os.path.join(os.getenv("FLET_ASSETS_DIR"), "icon.png")) # <- default icon created by flet in assets folder
+    FLET_APP_ICON = Path(os.path.join(os.getenv("FLET_ASSETS_DIR") or "", "icon.png")) # <- default icon created by flet in assets folder
 except ImportError:
     Icon = None
 except TypeError:
@@ -18,7 +18,7 @@ except TypeError:
 
 class DesktopNotification(BaseNotification):
     def __init__(self, page: Page):
-        self.sender: DesktopNotifier = None
+        self.sender: DesktopNotifier = DesktopNotifier(app_name="Flet App")
         self.page = page
 
         if not self.page:
@@ -27,7 +27,7 @@ class DesktopNotification(BaseNotification):
     def get_sender(self) -> DesktopNotifier:
         return self.sender
 
-    async def send_schedule(self, schedule_desktop_config: DesktopScheduleNotificationConfig) -> asyncio.Task:
+    async def send_schedule(self, schedule_desktop_config: DesktopScheduleNotificationConfig) -> asyncio.Task[None]:
         if isinstance(schedule_desktop_config.notify_time, datetime):
             delta = schedule_desktop_config.notify_time - datetime.now()
             wait_seconds = max(0, delta.total_seconds())
@@ -47,9 +47,11 @@ class DesktopNotification(BaseNotification):
         
         return task
 
+    # pyrefly: ignore [bad-override]
     async def send(self, config: DesktopNotificationConfig):
         self.sender = DesktopNotifier(
             app_name=config.app_name,
+            # pyrefly: ignore [not-callable]
             app_icon=Icon(
                 path=config.icon if isinstance(config.icon, Path) else FLET_APP_ICON if FLET_APP_ICON else Path(__file__).parent.parent.resolve() / "assets" / "default_icon.png"
             )

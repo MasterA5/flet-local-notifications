@@ -17,7 +17,7 @@ class DesktopNotificationConfig:
     app_name: str = "App"
     icon: Optional[Icon] = None # type: ignore # ignore
     urgency: Urgency = Urgency.Critical
-    icon: Optional[Path] = None
+    icon: Optional[Path] = field(default=None) # type: ignore # ignore
     buttons: Sequence[Button] = ()
     reply_field: Optional[ReplyField] = None
     on_dispatched: Optional[Callable[[], Any]] = None
