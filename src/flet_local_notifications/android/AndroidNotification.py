@@ -18,6 +18,9 @@ class AndroidNotification(BaseNotification):
         self.sender: Notification = Notification()
         self.page = page
 
+    def get_sender(self) -> Notification:
+        return self.sender
+
     def update_notification(self, new_config: AndroidNotificationUpdateConfig):
         if new_config.message:
             self.sender.updateMessage(new_config.message)
