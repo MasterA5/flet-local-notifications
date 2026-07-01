@@ -1,6 +1,6 @@
 from desktop_notifier import Button, ReplyField, Urgency
 from typing import Any, Callable, Optional, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 try:
@@ -15,16 +15,15 @@ class DesktopNotificationConfig:
     title: str
     message: str
     app_name: str = "App"
-    icon: Optional[Icon] = None # type: ignore # ignore
     urgency: Urgency = Urgency.Critical
-    icon: Optional[Path] = field(default=None) # type: ignore # ignore
+    icon: Optional[Path] = field(default=None)
     buttons: Sequence[Button] = ()
     reply_field: Optional[ReplyField] = None
     on_dispatched: Optional[Callable[[], Any]] = None
     on_clicked: Optional[Callable[[], Any]] = None
     on_dismissed: Optional[Callable[[], Any]] = None
-    attachment: Optional[Attachment] = None # type: ignore # ignore
-    sound: Optional[Sound] = None # type: ignore # ignore
+    attachment: Optional[Attachment] = None
+    sound: Optional[Sound] = None
     thread: Optional[str] = None
     timeout: int = -1
     use_default_icon: bool = False

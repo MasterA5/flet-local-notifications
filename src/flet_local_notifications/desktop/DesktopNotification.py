@@ -47,13 +47,13 @@ class DesktopNotification(BaseNotification):
         
         return task
 
-    # pyrefly: ignore [bad-override]
     async def send(self, config: DesktopNotificationConfig):
+        icon_path = config.icon if isinstance(config.icon, Path) else FLET_APP_ICON if FLET_APP_ICON else Path(__file__).parent.parent.resolve() / "assets" / "default_icon.png"
         self.sender = DesktopNotifier(
             app_name=config.app_name,
             # pyrefly: ignore [not-callable]
             app_icon=Icon(
-                path=config.icon if isinstance(config.icon, Path) else FLET_APP_ICON if FLET_APP_ICON else Path(__file__).parent.parent.resolve() / "assets" / "default_icon.png"
+                path=icon_path
             )
         )
 
@@ -61,6 +61,8 @@ class DesktopNotification(BaseNotification):
             title=config.title,
             message=config.message,
             urgency=Urgency.Critical,
+            # pyrefly: ignore [not-callable]
+            icon=Icon(path=icon_path),
             buttons=config.buttons,
             reply_field=config.reply_field,
             on_dispatched=config.on_dispatched,
