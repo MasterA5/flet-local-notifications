@@ -22,26 +22,26 @@ class AndroidNotificationConfig:
     background_color: Optional[str] = None
     sender: Optional[Notification] = field(init=False, default=None)
 
-    def add_button(cls, button: AndroidNotificationButton):
-        if not cls.buttons:
-            cls.buttons = []
+    def add_button(self, button: AndroidNotificationButton):
+        if not self.buttons:
+            self.buttons = []
 
-        if not cls.sender:
+        if not self.sender:
             raise ValueError("Notification sender is not initialized. Please send the notification before adding buttons.")
         
-        cls.sender.addButton(
+        self.sender.addButton(
             text=button.text, 
             on_release=button.on_release, 
             receiver_name=button.receiver_name,
             action=button.action
         )
 
-    def delete_all_buttons(cls):
-        if not cls.buttons:
+    def delete_all_buttons(self):
+        if not self.buttons:
             return
 
-        if not cls.sender:
+        if not self.sender:
             raise ValueError("Notification sender is not initialized. Please send the notification before deleting buttons.")
 
-        cls.buttons.clear()
-        cls.sender.removeButtons()
+        self.buttons.clear()
+        self.sender.removeButtons()
