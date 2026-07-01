@@ -11,5 +11,5 @@ class BaseNotification(ABC):
         return self.sender
 
     @abstractmethod
-    async def send(config):
+    async def send(self, config: Any) -> None:
         pass
