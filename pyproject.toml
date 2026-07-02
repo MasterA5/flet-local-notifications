@@ -1,12 +1,12 @@
 [project]
 name = "flet-local-notifications"
-version = "1.2.0"
+version = "1.2.1"
 description = "Add your description here"
 readme = "README.md"
 authors = [
     { name = "MasterA5", email = "agustin090806090806@gmail.com" }
 ]
-requires-python = ">=3.13"
+requires-python = ">=3.9"
 dependencies = [
     "flet==0.28.3",
     "desktop-notifier",
