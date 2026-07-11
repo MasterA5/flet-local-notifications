@@ -108,6 +108,3 @@ class AndroidNotification(BaseNotification):
             self.page.on_close = lambda e: task.cancel()
         
         return task
-
-    def get_sender(self) -> Notification:
-        return self.sender
